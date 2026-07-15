@@ -1,12 +1,14 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.models.exercise import ExerciseCategory
 
 
 class ExerciseCreate(BaseModel):
-    name: str
+    model_config = {"str_strip_whitespace": True}
+
+    name: str = Field(min_length=1, max_length=100)
     category: ExerciseCategory
-    primary_muscle_group: str | None = None
+    primary_muscle_group: str | None = Field(default=None, max_length=50)
 
 
 class ExerciseRead(BaseModel):

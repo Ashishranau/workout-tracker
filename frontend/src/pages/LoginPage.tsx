@@ -34,7 +34,7 @@ export function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+          className="rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
         />
         <input
           type="password"
@@ -42,20 +42,20 @@ export function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+          className="rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
         />
         {error && <p className="text-sm text-red-400">{error}</p>}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded bg-indigo-500 py-2 text-white hover:bg-indigo-400 disabled:opacity-50"
+          className="rounded bg-emerald-500 py-2 text-black font-medium hover:bg-emerald-400 disabled:opacity-50"
         >
           {isSubmitting ? "Logging in..." : "Log in"}
         </button>
       </form>
-      <p className="mt-4 text-sm text-slate-400">
+      <p className="mt-4 text-sm text-zinc-400">
         No account?{" "}
-        <Link to="/register" className="text-indigo-400 underline hover:text-indigo-300">
+        <Link to="/register" className="text-emerald-400 underline hover:text-emerald-300">
           Register
         </Link>
       </p>

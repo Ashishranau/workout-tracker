@@ -12,7 +12,7 @@ import { listExercises } from "../api/exercises";
 import type { Exercise, WorkoutSet } from "../api/types";
 
 const inputClass =
-  "mt-1 block rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 focus:border-indigo-500 focus:outline-none";
+  "mt-1 block rounded border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 focus:border-emerald-500 focus:outline-none";
 
 interface SetRowProps {
   sessionId: number;
@@ -51,7 +51,7 @@ function SetRow({ sessionId, set, exercises, onChanged }: SetRowProps) {
 
   if (isEditing) {
     return (
-      <li className="rounded border border-slate-800 bg-slate-900 p-3">
+      <li className="rounded border border-zinc-800 bg-zinc-900 p-3">
         <div className="flex flex-wrap items-end gap-2">
           <select
             value={exerciseId}
@@ -88,13 +88,13 @@ function SetRow({ sessionId, set, exercises, onChanged }: SetRowProps) {
           <button
             onClick={() => updateMutation.mutate()}
             disabled={updateMutation.isPending}
-            className="rounded bg-indigo-500 px-3 py-2 text-xs text-white hover:bg-indigo-400 disabled:opacity-50"
+            className="rounded bg-emerald-500 px-3 py-2 text-xs font-medium text-black hover:bg-emerald-400 disabled:opacity-50"
           >
             Save
           </button>
           <button
             onClick={() => setIsEditing(false)}
-            className="text-xs text-slate-400 underline hover:text-slate-200"
+            className="text-xs text-zinc-400 underline hover:text-white"
           >
             Cancel
           </button>
@@ -104,7 +104,7 @@ function SetRow({ sessionId, set, exercises, onChanged }: SetRowProps) {
   }
 
   return (
-    <li className="flex items-center justify-between rounded border border-slate-800 bg-slate-900 p-3 text-sm text-slate-300">
+    <li className="flex items-center justify-between rounded border border-zinc-800 bg-zinc-900 p-3 text-sm text-zinc-300">
       <span>
         <span className="font-medium text-white">
           {exercise?.name ?? `Exercise #${set.exercise_id}`}
@@ -116,7 +116,7 @@ function SetRow({ sessionId, set, exercises, onChanged }: SetRowProps) {
       <span className="flex gap-3 text-xs">
         <button
           onClick={() => setIsEditing(true)}
-          className="text-slate-400 underline hover:text-slate-200"
+          className="text-zinc-400 underline hover:text-white"
         >
           Edit
         </button>
@@ -185,19 +185,19 @@ export function SessionDetailPage() {
     <div className="max-w-lg">
       <Link
         to="/"
-        className="mb-4 inline-block text-sm text-slate-400 underline hover:text-slate-200"
+        className="mb-4 inline-block text-sm text-zinc-400 underline hover:text-white"
       >
         ← Back to dashboard
       </Link>
 
-      {isLoading && <p className="text-slate-500">Loading...</p>}
+      {isLoading && <p className="text-zinc-500">Loading...</p>}
       {error && <p className="text-red-400">Could not load this workout.</p>}
 
       {session && (
         <>
           {isEditingSession ? (
             <div className="mb-6 flex flex-wrap items-end gap-3">
-              <label className="text-sm text-slate-400">
+              <label className="text-sm text-zinc-400">
                 Date
                 <input
                   type="date"
@@ -206,7 +206,7 @@ export function SessionDetailPage() {
                   className={inputClass}
                 />
               </label>
-              <label className="text-sm text-slate-400">
+              <label className="text-sm text-zinc-400">
                 Notes
                 <input
                   type="text"
@@ -218,13 +218,13 @@ export function SessionDetailPage() {
               <button
                 onClick={() => updateSessionMutation.mutate()}
                 disabled={updateSessionMutation.isPending}
-                className="rounded bg-indigo-500 px-3 py-2 text-sm text-white hover:bg-indigo-400 disabled:opacity-50"
+                className="rounded bg-emerald-500 px-3 py-2 text-sm font-medium text-black hover:bg-emerald-400 disabled:opacity-50"
               >
                 Save
               </button>
               <button
                 onClick={() => setIsEditingSession(false)}
-                className="text-sm text-slate-400 underline hover:text-slate-200"
+                className="text-sm text-zinc-400 underline hover:text-white"
               >
                 Cancel
               </button>
@@ -233,12 +233,12 @@ export function SessionDetailPage() {
             <div className="mb-6 flex items-start justify-between">
               <div>
                 <h1 className="text-2xl font-semibold text-white">{session.date}</h1>
-                {session.notes && <p className="text-slate-400">{session.notes}</p>}
+                {session.notes && <p className="text-zinc-400">{session.notes}</p>}
               </div>
               <div className="flex gap-3 text-sm">
                 <button
                   onClick={startEditingSession}
-                  className="text-slate-400 underline hover:text-slate-200"
+                  className="text-zinc-400 underline hover:text-white"
                 >
                   Edit
                 </button>
@@ -257,7 +257,7 @@ export function SessionDetailPage() {
           )}
 
           {session.sets.length === 0 && (
-            <p className="text-slate-500">No sets logged for this workout.</p>
+            <p className="text-zinc-500">No sets logged for this workout.</p>
           )}
 
           <ul className="flex flex-col gap-2">

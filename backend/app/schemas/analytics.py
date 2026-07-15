@@ -1,11 +1,11 @@
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class OneRepMaxRequest(BaseModel):
-    weight_kg: float
-    reps: int
+    weight_kg: float = Field(gt=0, le=1000)
+    reps: int = Field(ge=1, le=12)
 
 
 class OneRepMaxResponse(BaseModel):
@@ -31,8 +31,8 @@ class PlateauResponse(BaseModel):
 
 class StrengthStandardRequest(BaseModel):
     exercise_id: int
-    weight_kg: float
-    reps: int
+    weight_kg: float = Field(gt=0, le=1000)
+    reps: int = Field(ge=1, le=12)
 
 
 class StrengthStandardResponse(BaseModel):

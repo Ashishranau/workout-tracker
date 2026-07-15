@@ -6,7 +6,7 @@ import { addSet, createSession } from "../api/workouts";
 import type { ExerciseCategory, WorkoutSession } from "../api/types";
 
 const inputClass =
-  "mt-1 block rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none";
+  "mt-1 block rounded border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-emerald-500 focus:outline-none";
 
 const NEW_EXERCISE_VALUE = "__new__";
 
@@ -83,7 +83,7 @@ export function LogWorkoutPage() {
       <div className="max-w-sm">
         <h1 className="mb-6 text-2xl font-semibold text-white">Start a workout</h1>
         <form onSubmit={handleCreateSession} className="flex flex-col gap-4">
-          <label className="text-sm text-slate-400">
+          <label className="text-sm text-zinc-400">
             Date
             <input
               type="date"
@@ -93,7 +93,7 @@ export function LogWorkoutPage() {
               className={`${inputClass} w-full`}
             />
           </label>
-          <label className="text-sm text-slate-400">
+          <label className="text-sm text-zinc-400">
             Notes (optional)
             <input
               type="text"
@@ -105,7 +105,7 @@ export function LogWorkoutPage() {
           </label>
           <button
             type="submit"
-            className="rounded bg-indigo-500 py-2 text-white hover:bg-indigo-400"
+            className="rounded bg-emerald-500 py-2 text-black font-medium hover:bg-emerald-400"
           >
             Start
           </button>
@@ -117,13 +117,13 @@ export function LogWorkoutPage() {
   return (
     <div className="max-w-lg">
       <h1 className="mb-1 text-2xl font-semibold text-white">{session.date}</h1>
-      {session.notes && <p className="mb-6 text-slate-400">{session.notes}</p>}
+      {session.notes && <p className="mb-6 text-zinc-400">{session.notes}</p>}
 
       {isAddingExercise ? (
-        <div className="mb-4 rounded border border-slate-800 bg-slate-900 p-4">
+        <div className="mb-4 rounded border border-zinc-800 bg-zinc-900 p-4">
           <h2 className="mb-3 text-sm font-semibold text-white">Add new exercise</h2>
           <div className="flex flex-wrap items-end gap-3">
-            <label className="text-sm text-slate-400">
+            <label className="text-sm text-zinc-400">
               Name
               <input
                 type="text"
@@ -133,7 +133,7 @@ export function LogWorkoutPage() {
                 className={`${inputClass} w-56`}
               />
             </label>
-            <label className="text-sm text-slate-400">
+            <label className="text-sm text-zinc-400">
               Category
               <select
                 value={newExerciseCategory}
@@ -146,7 +146,7 @@ export function LogWorkoutPage() {
                 <option value="bodyweight">Bodyweight</option>
               </select>
             </label>
-            <label className="text-sm text-slate-400">
+            <label className="text-sm text-zinc-400">
               Muscle group (optional)
               <input
                 type="text"
@@ -160,7 +160,7 @@ export function LogWorkoutPage() {
               type="button"
               onClick={() => createExerciseMutation.mutate()}
               disabled={!newExerciseName || createExerciseMutation.isPending}
-              className="rounded bg-indigo-500 px-4 py-2 text-sm text-white hover:bg-indigo-400 disabled:opacity-50"
+              className="rounded bg-emerald-500 px-4 py-2 text-sm font-medium text-black hover:bg-emerald-400 disabled:opacity-50"
             >
               Create
             </button>
@@ -170,7 +170,7 @@ export function LogWorkoutPage() {
                 setIsAddingExercise(false);
                 setNewExerciseError(null);
               }}
-              className="text-sm text-slate-400 underline hover:text-slate-200"
+              className="text-sm text-zinc-400 underline hover:text-white"
             >
               Cancel
             </button>
@@ -181,7 +181,7 @@ export function LogWorkoutPage() {
         </div>
       ) : (
         <form onSubmit={handleAddSet} className="mb-4 flex flex-wrap items-end gap-3">
-          <label className="text-sm text-slate-400">
+          <label className="text-sm text-zinc-400">
             Exercise
             <select
               value={exerciseId}
@@ -207,7 +207,7 @@ export function LogWorkoutPage() {
               <option value={NEW_EXERCISE_VALUE}>+ Add new exercise...</option>
             </select>
           </label>
-          <label className="text-sm text-slate-400">
+          <label className="text-sm text-zinc-400">
             Weight (kg)
             <input
               type="number"
@@ -218,7 +218,7 @@ export function LogWorkoutPage() {
               className={`${inputClass} w-24`}
             />
           </label>
-          <label className="text-sm text-slate-400">
+          <label className="text-sm text-zinc-400">
             Reps
             <input
               type="number"
@@ -228,7 +228,7 @@ export function LogWorkoutPage() {
               className={`${inputClass} w-20`}
             />
           </label>
-          <label className="text-sm text-slate-400">
+          <label className="text-sm text-zinc-400">
             RPE
             <input
               type="number"
@@ -240,7 +240,7 @@ export function LogWorkoutPage() {
           </label>
           <button
             type="submit"
-            className="rounded bg-indigo-500 px-4 py-2 text-white hover:bg-indigo-400"
+            className="rounded bg-emerald-500 px-4 py-2 text-black font-medium hover:bg-emerald-400"
           >
             Add set
           </button>
@@ -254,7 +254,7 @@ export function LogWorkoutPage() {
           return (
             <li
               key={s.id}
-              className="rounded border border-slate-800 bg-slate-900 p-3 text-sm text-slate-300"
+              className="rounded border border-zinc-800 bg-zinc-900 p-3 text-sm text-zinc-300"
             >
               <span className="font-medium text-white">
                 {exercise?.name ?? `Exercise #${s.exercise_id}`}
@@ -269,7 +269,7 @@ export function LogWorkoutPage() {
 
       <button
         onClick={() => navigate("/")}
-        className="mt-6 text-sm text-slate-400 underline hover:text-slate-200"
+        className="mt-6 text-sm text-zinc-400 underline hover:text-white"
       >
         Done - back to dashboard
       </button>

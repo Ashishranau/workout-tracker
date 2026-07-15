@@ -36,7 +36,7 @@ export function RegisterPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+          className="rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
         />
         <input
           type="password"
@@ -44,31 +44,31 @@ export function RegisterPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+          className="rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
         />
         <select
           value={sex}
           onChange={(e) => setSex(e.target.value as Sex)}
-          className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 focus:border-indigo-500 focus:outline-none"
+          className="rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-zinc-100 focus:border-emerald-500 focus:outline-none"
         >
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
-        <p className="-mt-2 text-xs text-slate-500">
+        <p className="-mt-2 text-xs text-zinc-500">
           Used for bodyweight-relative strength standards.
         </p>
         {error && <p className="text-sm text-red-400">{error}</p>}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded bg-indigo-500 py-2 text-white hover:bg-indigo-400 disabled:opacity-50"
+          className="rounded bg-emerald-500 py-2 text-black font-medium hover:bg-emerald-400 disabled:opacity-50"
         >
           {isSubmitting ? "Creating account..." : "Register"}
         </button>
       </form>
-      <p className="mt-4 text-sm text-slate-400">
+      <p className="mt-4 text-sm text-zinc-400">
         Already have an account?{" "}
-        <Link to="/login" className="text-indigo-400 underline hover:text-indigo-300">
+        <Link to="/login" className="text-emerald-400 underline hover:text-emerald-300">
           Log in
         </Link>
       </p>

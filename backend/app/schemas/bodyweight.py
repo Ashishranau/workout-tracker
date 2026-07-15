@@ -1,11 +1,11 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class BodyweightLogCreate(BaseModel):
     date: date
-    weight_kg: float
+    weight_kg: float = Field(gt=0, le=500)
 
 
 class BodyweightLogRead(BodyweightLogCreate):

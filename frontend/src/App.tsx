@@ -10,7 +10,7 @@ import { SessionDetailPage } from "./pages/SessionDetailPage";
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-black text-zinc-100">
       <NavBar />
       <main className="mx-auto max-w-4xl px-6 py-8">
         <Routes>

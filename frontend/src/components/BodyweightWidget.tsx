@@ -27,15 +27,15 @@ export function BodyweightWidget() {
   }
 
   return (
-    <div className="rounded border border-slate-800 bg-slate-900 p-4">
+    <div className="rounded border border-zinc-800 bg-zinc-900 p-4">
       <h2 className="mb-2 text-sm font-semibold text-white">Bodyweight</h2>
       {latest ? (
-        <p className="mb-3 text-sm text-slate-400">
-          Latest: <span className="font-medium text-slate-100">{latest.weight_kg}kg</span> on{" "}
+        <p className="mb-3 text-sm text-zinc-400">
+          Latest: <span className="font-medium text-zinc-100">{latest.weight_kg}kg</span> on{" "}
           {latest.date}
         </p>
       ) : (
-        <p className="mb-3 text-sm text-slate-500">
+        <p className="mb-3 text-sm text-zinc-500">
           No bodyweight logged yet - needed for strength standards.
         </p>
       )}
@@ -46,12 +46,12 @@ export function BodyweightWidget() {
           placeholder="kg today"
           value={weightKg}
           onChange={(e) => setWeightKg(e.target.value)}
-          className="w-28 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-sm text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+          className="w-28 rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-sm text-zinc-100 placeholder-zinc-500 focus:border-emerald-500 focus:outline-none"
         />
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="rounded bg-indigo-500 px-3 py-1 text-sm text-white hover:bg-indigo-400 disabled:opacity-50"
+          className="rounded bg-emerald-500 px-3 py-1 text-sm font-medium text-black hover:bg-emerald-400 disabled:opacity-50"
         >
           Log
         </button>

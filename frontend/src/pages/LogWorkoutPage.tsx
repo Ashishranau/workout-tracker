@@ -5,6 +5,9 @@ import { listExercises } from "../api/exercises";
 import { addSet, createSession } from "../api/workouts";
 import type { WorkoutSession } from "../api/types";
 
+const inputClass =
+  "mt-1 block rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none";
+
 export function LogWorkoutPage() {
   const navigate = useNavigate();
   const { data: exercises } = useQuery({ queryKey: ["exercises"], queryFn: listExercises });
@@ -49,29 +52,32 @@ export function LogWorkoutPage() {
   if (!session) {
     return (
       <div className="max-w-sm">
-        <h1 className="mb-6 text-2xl font-semibold text-gray-900">Start a workout</h1>
+        <h1 className="mb-6 text-2xl font-semibold text-white">Start a workout</h1>
         <form onSubmit={handleCreateSession} className="flex flex-col gap-4">
-          <label className="text-sm text-gray-600">
+          <label className="text-sm text-slate-400">
             Date
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
-              className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+              className={`${inputClass} w-full`}
             />
           </label>
-          <label className="text-sm text-gray-600">
+          <label className="text-sm text-slate-400">
             Notes (optional)
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. leg day"
-              className="mt-1 w-full rounded border border-gray-300 px-3 py-2"
+              className={`${inputClass} w-full`}
             />
           </label>
-          <button type="submit" className="rounded bg-gray-900 py-2 text-white">
+          <button
+            type="submit"
+            className="rounded bg-indigo-500 py-2 text-white hover:bg-indigo-400"
+          >
             Start
           </button>
         </form>
@@ -81,17 +87,17 @@ export function LogWorkoutPage() {
 
   return (
     <div className="max-w-lg">
-      <h1 className="mb-1 text-2xl font-semibold text-gray-900">{session.date}</h1>
-      {session.notes && <p className="mb-6 text-gray-600">{session.notes}</p>}
+      <h1 className="mb-1 text-2xl font-semibold text-white">{session.date}</h1>
+      {session.notes && <p className="mb-6 text-slate-400">{session.notes}</p>}
 
       <form onSubmit={handleAddSet} className="mb-4 flex flex-wrap items-end gap-3">
-        <label className="text-sm text-gray-600">
+        <label className="text-sm text-slate-400">
           Exercise
           <select
             value={exerciseId}
             onChange={(e) => setExerciseId(Number(e.target.value))}
             required
-            className="mt-1 block rounded border border-gray-300 px-3 py-2"
+            className={inputClass}
           >
             <option value="" disabled>
               Select...
@@ -103,7 +109,7 @@ export function LogWorkoutPage() {
             ))}
           </select>
         </label>
-        <label className="text-sm text-gray-600">
+        <label className="text-sm text-slate-400">
           Weight (kg)
           <input
             type="number"
@@ -111,41 +117,47 @@ export function LogWorkoutPage() {
             value={weightKg}
             onChange={(e) => setWeightKg(e.target.value)}
             required
-            className="mt-1 block w-24 rounded border border-gray-300 px-3 py-2"
+            className={`${inputClass} w-24`}
           />
         </label>
-        <label className="text-sm text-gray-600">
+        <label className="text-sm text-slate-400">
           Reps
           <input
             type="number"
             value={reps}
             onChange={(e) => setReps(e.target.value)}
             required
-            className="mt-1 block w-20 rounded border border-gray-300 px-3 py-2"
+            className={`${inputClass} w-20`}
           />
         </label>
-        <label className="text-sm text-gray-600">
+        <label className="text-sm text-slate-400">
           RPE
           <input
             type="number"
             step="0.5"
             value={rpe}
             onChange={(e) => setRpe(e.target.value)}
-            className="mt-1 block w-20 rounded border border-gray-300 px-3 py-2"
+            className={`${inputClass} w-20`}
           />
         </label>
-        <button type="submit" className="rounded bg-gray-900 px-4 py-2 text-white">
+        <button
+          type="submit"
+          className="rounded bg-indigo-500 px-4 py-2 text-white hover:bg-indigo-400"
+        >
           Add set
         </button>
       </form>
-      {setError && <p className="mb-4 text-sm text-red-600">{setError}</p>}
+      {setError && <p className="mb-4 text-sm text-red-400">{setError}</p>}
 
       <ul className="flex flex-col gap-2">
         {session.sets.map((s) => {
           const exercise = exercises?.find((ex) => ex.id === s.exercise_id);
           return (
-            <li key={s.id} className="rounded border border-gray-200 p-3 text-sm">
-              <span className="font-medium text-gray-900">
+            <li
+              key={s.id}
+              className="rounded border border-slate-800 bg-slate-900 p-3 text-sm text-slate-300"
+            >
+              <span className="font-medium text-white">
                 {exercise?.name ?? `Exercise #${s.exercise_id}`}
               </span>
               {" — "}
@@ -156,7 +168,10 @@ export function LogWorkoutPage() {
         })}
       </ul>
 
-      <button onClick={() => navigate("/")} className="mt-6 text-sm text-gray-600 underline">
+      <button
+        onClick={() => navigate("/")}
+        className="mt-6 text-sm text-slate-400 underline hover:text-slate-200"
+      >
         Done - back to dashboard
       </button>
     </div>

@@ -4,16 +4,49 @@ from app.database import SessionLocal
 from app.models.exercise import Exercise, ExerciseCategory
 
 EXERCISES = [
+    # Barbell lifts with strength-standard tiers defined in cpp_engine/strength_standard.cpp -
+    # names must match exactly, do not rename these five.
     ("Barbell Back Squat", ExerciseCategory.barbell, "legs"),
     ("Barbell Bench Press", ExerciseCategory.barbell, "chest"),
     ("Conventional Deadlift", ExerciseCategory.barbell, "back"),
     ("Overhead Press", ExerciseCategory.barbell, "shoulders"),
     ("Barbell Row", ExerciseCategory.barbell, "back"),
-    ("Pull-Up", ExerciseCategory.bodyweight, "back"),
+    # Additional barbell
+    ("Front Squat", ExerciseCategory.barbell, "legs"),
+    ("Romanian Deadlift", ExerciseCategory.barbell, "hamstrings"),
+    ("Sumo Deadlift", ExerciseCategory.barbell, "legs"),
+    ("Incline Bench Press", ExerciseCategory.barbell, "chest"),
+    ("Close-Grip Bench Press", ExerciseCategory.barbell, "triceps"),
+    ("Push Press", ExerciseCategory.barbell, "shoulders"),
+    ("Barbell Hip Thrust", ExerciseCategory.barbell, "glutes"),
+    ("Barbell Curl", ExerciseCategory.barbell, "biceps"),
+    # Dumbbell
     ("Dumbbell Bench Press", ExerciseCategory.dumbbell, "chest"),
     ("Dumbbell Shoulder Press", ExerciseCategory.dumbbell, "shoulders"),
+    ("Dumbbell Row", ExerciseCategory.dumbbell, "back"),
+    ("Dumbbell Incline Bench Press", ExerciseCategory.dumbbell, "chest"),
+    ("Dumbbell Lateral Raise", ExerciseCategory.dumbbell, "shoulders"),
+    ("Dumbbell Bicep Curl", ExerciseCategory.dumbbell, "biceps"),
+    ("Dumbbell Romanian Deadlift", ExerciseCategory.dumbbell, "hamstrings"),
+    ("Goblet Squat", ExerciseCategory.dumbbell, "legs"),
+    ("Dumbbell Lunge", ExerciseCategory.dumbbell, "legs"),
+    ("Dumbbell Fly", ExerciseCategory.dumbbell, "chest"),
+    # Machine / cable
     ("Leg Press", ExerciseCategory.machine, "legs"),
     ("Lat Pulldown", ExerciseCategory.machine, "back"),
+    ("Leg Curl", ExerciseCategory.machine, "hamstrings"),
+    ("Leg Extension", ExerciseCategory.machine, "quads"),
+    ("Cable Tricep Pushdown", ExerciseCategory.machine, "triceps"),
+    ("Cable Fly", ExerciseCategory.machine, "chest"),
+    ("Seated Cable Row", ExerciseCategory.machine, "back"),
+    ("Chest Press Machine", ExerciseCategory.machine, "chest"),
+    ("Shoulder Press Machine", ExerciseCategory.machine, "shoulders"),
+    ("Cable Bicep Curl", ExerciseCategory.machine, "biceps"),
+    # Bodyweight
+    ("Pull-Up", ExerciseCategory.bodyweight, "back"),
+    ("Chin-Up", ExerciseCategory.bodyweight, "back"),
+    ("Push-Up", ExerciseCategory.bodyweight, "chest"),
+    ("Dip", ExerciseCategory.bodyweight, "triceps"),
 ]
 
 

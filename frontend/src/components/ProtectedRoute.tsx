@@ -8,7 +8,7 @@ export function ProtectedRoute() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <p className="mt-24 text-center text-gray-500">Loading...</p>;
+    return <p className="mt-24 text-center text-slate-500">Loading...</p>;
   }
 
   if (!user) {

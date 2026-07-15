@@ -47,3 +47,7 @@ integration), see `INTERVIEW_NOTES.md` instead.
 - Frontend: added `SessionDetailPage` (`/sessions/:id`) so past workouts can be reviewed set-by-set, linked from each Dashboard session row.
 - Frontend: `ProgressPage` chart now has a custom tooltip (date, estimated 1RM, RPE, bodyweight) and a new "Current Strength Tier" section using the auto endpoint.
 - Re-verified everything in a real browser (Playwright): bodyweight upsert, session detail view, chart tooltip content, and auto tier display all confirmed working with zero console errors.
+- Expanded the exercise catalog from 10 to 37 (added squat/hinge/push/pull variations across barbell, dumbbell, machine, and bodyweight categories). Only the original "big 5" have strength-standard tiers; new exercises are fully loggable but report "not supported" for the tier feature rather than getting fabricated breakpoints.
+- Cleaned up leftover test-data sessions created during my own verification runs.
+- Redesigned the frontend with a dark theme (Tailwind CSS only - no new libraries): dark slate backgrounds, indigo accent for primary actions/links, and updated recharts colors (grid, axis ticks, line, tooltip) for readability against the dark background, since those are SVG props recharts takes directly and aren't themed by Tailwind's dark-mode classes.
+- Re-verified visually in a real browser across all five pages (login, dashboard, log workout, progress, session detail) - consistent dark styling, readable chart, zero console errors.

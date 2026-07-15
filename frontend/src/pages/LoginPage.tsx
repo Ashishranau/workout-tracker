@@ -26,7 +26,7 @@ export function LoginPage() {
 
   return (
     <div className="mx-auto mt-24 max-w-sm">
-      <h1 className="mb-6 text-2xl font-semibold text-gray-900">Log in</h1>
+      <h1 className="mb-6 text-2xl font-semibold text-white">Log in</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="email"
@@ -34,7 +34,7 @@ export function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
         />
         <input
           type="password"
@@ -42,20 +42,20 @@ export function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="rounded border border-gray-300 px-3 py-2"
+          className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
         />
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded bg-gray-900 py-2 text-white disabled:opacity-50"
+          className="rounded bg-indigo-500 py-2 text-white hover:bg-indigo-400 disabled:opacity-50"
         >
           {isSubmitting ? "Logging in..." : "Log in"}
         </button>
       </form>
-      <p className="mt-4 text-sm text-gray-600">
+      <p className="mt-4 text-sm text-slate-400">
         No account?{" "}
-        <Link to="/register" className="text-gray-900 underline">
+        <Link to="/register" className="text-indigo-400 underline hover:text-indigo-300">
           Register
         </Link>
       </p>

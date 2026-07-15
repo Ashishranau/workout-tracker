@@ -8,8 +8,10 @@ from app.models.workout import WorkoutSession, WorkoutSet
 from app.schemas.workout import (
     WorkoutSessionCreate,
     WorkoutSessionRead,
+    WorkoutSessionUpdate,
     WorkoutSetCreate,
     WorkoutSetRead,
+    WorkoutSetUpdate,
 )
 
 router = APIRouter(prefix="/sessions", tags=["workouts"])
@@ -25,6 +27,18 @@ def _get_owned_session(session_id: int, db: Session, current_user: User) -> Work
     if session is None:
         raise HTTPException(status_code=404, detail="Workout session not found")
     return session
+
+
+def _get_owned_set(session_id: int, set_id: int, db: Session, current_user: User) -> WorkoutSet:
+    _get_owned_session(session_id, db, current_user)
+    workout_set = (
+        db.query(WorkoutSet)
+        .filter(WorkoutSet.id == set_id, WorkoutSet.session_id == session_id)
+        .first()
+    )
+    if workout_set is None:
+        raise HTTPException(status_code=404, detail="Set not found")
+    return workout_set
 
 
 @router.post("", response_model=WorkoutSessionRead, status_code=201)
@@ -63,6 +77,32 @@ def get_session(
     return _get_owned_session(session_id, db, current_user)
 
 
+@router.patch("/{session_id}", response_model=WorkoutSessionRead)
+def update_session(
+    session_id: int,
+    session_in: WorkoutSessionUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    session = _get_owned_session(session_id, db, current_user)
+    for field, value in session_in.model_dump(exclude_unset=True).items():
+        setattr(session, field, value)
+    db.commit()
+    db.refresh(session)
+    return session
+
+
+@router.delete("/{session_id}", status_code=204)
+def delete_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    session = _get_owned_session(session_id, db, current_user)
+    db.delete(session)
+    db.commit()
+
+
 @router.post("/{session_id}/sets", response_model=WorkoutSetRead, status_code=201)
 def add_set(
     session_id: int,
@@ -77,3 +117,31 @@ def add_set(
     db.commit()
     db.refresh(workout_set)
     return workout_set
+
+
+@router.patch("/{session_id}/sets/{set_id}", response_model=WorkoutSetRead)
+def update_set(
+    session_id: int,
+    set_id: int,
+    set_in: WorkoutSetUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    workout_set = _get_owned_set(session_id, set_id, db, current_user)
+    for field, value in set_in.model_dump(exclude_unset=True).items():
+        setattr(workout_set, field, value)
+    db.commit()
+    db.refresh(workout_set)
+    return workout_set
+
+
+@router.delete("/{session_id}/sets/{set_id}", status_code=204)
+def delete_set(
+    session_id: int,
+    set_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    workout_set = _get_owned_set(session_id, set_id, db, current_user)
+    db.delete(workout_set)
+    db.commit()

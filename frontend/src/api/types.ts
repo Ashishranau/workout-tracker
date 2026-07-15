@@ -46,6 +46,13 @@ export interface WorkoutSetCreate {
   rpe?: number | null;
 }
 
+export interface WorkoutSetUpdate {
+  exercise_id?: number;
+  weight_kg?: number;
+  reps?: number;
+  rpe?: number | null;
+}
+
 export interface WorkoutSession {
   id: number;
   date: string;
@@ -56,6 +63,11 @@ export interface WorkoutSession {
 
 export interface WorkoutSessionCreate {
   date: string;
+  notes?: string | null;
+}
+
+export interface WorkoutSessionUpdate {
+  date?: string;
   notes?: string | null;
 }
 

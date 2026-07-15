@@ -1,4 +1,5 @@
-from datetime import date, datetime
+from datetime import date as date_
+from datetime import datetime
 
 from pydantic import BaseModel
 
@@ -11,6 +12,13 @@ class WorkoutSetCreate(BaseModel):
     rpe: float | None = None
 
 
+class WorkoutSetUpdate(BaseModel):
+    exercise_id: int | None = None
+    weight_kg: float | None = None
+    reps: int | None = None
+    rpe: float | None = None
+
+
 class WorkoutSetRead(WorkoutSetCreate):
     id: int
     created_at: datetime
@@ -20,7 +28,12 @@ class WorkoutSetRead(WorkoutSetCreate):
 
 
 class WorkoutSessionCreate(BaseModel):
-    date: date
+    date: date_
+    notes: str | None = None
+
+
+class WorkoutSessionUpdate(BaseModel):
+    date: date_ | None = None
     notes: str | None = None
 
 

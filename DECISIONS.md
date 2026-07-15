@@ -22,3 +22,7 @@ integration), see `INTERVIEW_NOTES.md` instead.
 - Built the extension (`analytics_engine.cp311-win_amd64.pyd`) and verified it imports and computes correctly from Python.
 - Added `app/services/analytics.py` bridging to the compiled module, `POST /analytics/one-rep-max` route (auth-protected), C++ `ValueError`s mapped to HTTP 400.
 - Verified end-to-end: valid input, invalid-reps rejection, and unauthenticated rejection all behave correctly.
+- Added `plateau.{hpp,cpp}`: least-squares linear regression over per-session 1RM estimates, flags a plateau when weekly % improvement drops below a threshold (default 0.5%/week).
+- Added `analyze_plateau()` in `app/services/analytics.py`: queries the user's sets for an exercise (reps 1-12 only), takes the best estimated 1RM per session day, feeds the trend into the C++ regression.
+- Added `GET /analytics/plateau/{exercise_id}` route (auth-protected).
+- Verified end-to-end with a flat trend (correctly flagged as plateaued), an improving trend (correctly not flagged), and a no-data case (clean 400).

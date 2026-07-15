@@ -17,3 +17,8 @@ integration), see `INTERVIEW_NOTES.md` instead.
 - Seeded a 10-exercise curated catalog via `scripts/seed_exercises.py` (idempotent, safe to re-run).
 - Added `/exercises` list route and `/sessions`, `/sessions/{id}`, `/sessions/{id}/sets` routes, scoped per-user via `user_id` filtering.
 - Verified full auth + workout-logging flow end-to-end via curl.
+- Installed MSVC Build Tools + CMake (bundled) for compiling the C++ engine on Windows.
+- Scaffolded `cpp_engine/`: `one_rep_max.{hpp,cpp}` (Epley + Brzycki formulas, validated for reps 1-12), `bindings.cpp` (pybind11 module `analytics_engine`), `CMakeLists.txt`.
+- Built the extension (`analytics_engine.cp311-win_amd64.pyd`) and verified it imports and computes correctly from Python.
+- Added `app/services/analytics.py` bridging to the compiled module, `POST /analytics/one-rep-max` route (auth-protected), C++ `ValueError`s mapped to HTTP 400.
+- Verified end-to-end: valid input, invalid-reps rejection, and unauthenticated rejection all behave correctly.

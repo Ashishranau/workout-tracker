@@ -88,8 +88,39 @@ would need to be added manually) — a library would have handled more of this b
 default. Accepted the extra implementation/review burden for full understanding,
 control, and material to discuss in interviews.
 
-## C++/Python integration (pybind11)
+## C++/Python integration: pybind11
 
-_To be filled in once the analytics engine is actually built — will cover pybind11
-vs. a separate microservice/subprocess vs. ctypes, and the tradeoffs of embedding a
-compiled extension directly in the Python process._
+**Chosen:** A pybind11-based C++ extension module (`analytics_engine`), built with
+CMake, imported directly into the FastAPI process like any other Python module.
+
+**Alternatives considered:** `ctypes`/`cffi` calling into a plain C ABI shared
+library; a separate C++ microservice (e.g. over gRPC or a small HTTP server) that
+FastAPI calls over the network; shelling out to a compiled CLI binary and parsing
+its stdout.
+
+**Why rejected:** `ctypes` would work but pushes all the type-marshalling and
+error-handling by hand (no automatic C++ exception → Python exception translation,
+no easy way to return a struct like `OneRepMaxEstimate` without manually defining a
+mirrored `ctypes.Structure`) — pybind11 generates that binding code from ordinary
+C++ signatures instead. A separate microservice would add real deployment
+complexity (another process to run, monitor, and version alongside the API) and
+network latency for what's fundamentally a synchronous, in-process calculation —
+that overhead only pays off if the C++ side needed independent scaling, which
+these computations don't. Shelling out to a CLI binary per request means paying
+process-spawn cost on every call and communicating through text serialization
+instead of native types.
+
+**Tradeoff accepted:** The extension is compiled per-platform (a `.pyd` on
+Windows, a `.so` on Linux) and isn't committed to git — it has to be rebuilt
+wherever the backend runs, which means the Render deployment will need a build
+step (installing a compiler + CMake + running the build) rather than a plain
+`pip install`. Accepted this because in-process calls with real C++ types and
+automatic exception translation are worth the extra deploy-time build step,
+especially since the analytics engine is the project's core differentiator and
+should run as fast and as directly-integrated as possible.
+
+**Gotcha hit:** on this Windows machine, CMake auto-detected "Visual Studio 18
+2026" as the installed toolset — the generator name `"Visual Studio 17 2022"`
+(what most tutorials show) failed because the actual installed MSBuild/toolset
+version didn't match. Fixed by checking `cmake --help` for the generator CMake
+actually detected on this machine, rather than assuming a fixed generator string.

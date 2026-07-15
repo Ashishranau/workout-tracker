@@ -204,3 +204,37 @@ wasn't caught by DOM-text assertions in an automated check (the text
 inspecting a screenshot surfaced it. Fixed with a `tickFormatter` rounding
 values to whole kg. Take-away: verifying a chart needs looking at the
 rendered chart, not just checking that the underlying data arrived.
+
+## Effort-quality filtering: RPE threshold, not an RPE-adjusted formula
+
+**Chosen:** A set only counts toward the 1RM trend/plateau calculation if its
+RPE is >= 8 or wasn't logged at all. Explicitly low-RPE sets (warmups,
+deload work, e.g. RPE 6-7) are excluded outright rather than adjusted.
+
+**Alternatives considered:** (1) Ignore RPE entirely for the computation (the
+original implementation - RPE was captured and displayed but never used).
+(2) A full RPE-adjusted 1RM formula - reps-in-reserve tables (as used in
+Mike Tuchscherer's RTS system) that convert a reps+RPE combination into an
+estimated %1RM, so even a deliberately submaximal set contributes a
+(corrected) data point instead of being discarded.
+
+**Why rejected:** Ignoring RPE entirely was the status quo this decision
+replaced - it meant a warmup set or an intentional deload could silently
+distort the trend (e.g. reading as "regression" when it was actually planned
+lighter work), which is exactly the failure mode a plateau-detection feature
+should avoid. A full RPE-adjustment formula would be more accurate in
+principle, but reps-in-reserve tables are themselves approximations with
+real disagreement between sources, layering one more approximate correction
+on top of an already-approximate 1RM formula (Epley/Brzycki). That compounds
+uncertainty for a marginal accuracy gain, and makes the number harder to
+explain ("why is my 1RM different from what I calculated by hand").
+
+**Tradeoff accepted:** Sets logged at RPE 7 or below are excluded from the
+trend entirely rather than contributing an adjusted estimate - so a user who
+only ever trains at moderate RPE could end up with too little qualifying
+data to detect a trend at all. Accepted this since a smaller set of
+high-confidence data points is more useful than a larger set of
+uncertain-quality ones for something meant to answer "am I actually
+stagnating." Missing RPE defaults to *included*, not excluded, specifically
+because most already-logged data predates RPE tracking - a stricter default
+would have silently discarded a user's own history.

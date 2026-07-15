@@ -10,8 +10,33 @@ import {
   YAxis,
 } from "recharts";
 import { listExercises } from "../api/exercises";
-import { getPlateau, getStrengthStandard } from "../api/analytics";
-import type { StrengthStandardResult } from "../api/types";
+import {
+  getCurrentStrengthStandard,
+  getPlateau,
+  getStrengthStandard,
+} from "../api/analytics";
+import type { OneRepMaxHistoryPoint, StrengthStandardResult } from "../api/types";
+
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: OneRepMaxHistoryPoint }>;
+}
+
+function ChartTooltip({ active, payload }: ChartTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null;
+  const point = payload[0].payload;
+
+  return (
+    <div className="rounded border border-gray-200 bg-white p-3 text-sm shadow-sm">
+      <p className="font-medium text-gray-900">{point.date}</p>
+      <p className="text-gray-700">Est. 1RM: {point.estimated_one_rep_max.toFixed(1)}kg</p>
+      <p className="text-gray-500">RPE: {point.rpe ?? "not logged"}</p>
+      <p className="text-gray-500">
+        Bodyweight: {point.bodyweight_kg !== null ? `${point.bodyweight_kg}kg` : "not logged"}
+      </p>
+    </div>
+  );
+}
 
 export function ProgressPage() {
   const { data: exercises } = useQuery({ queryKey: ["exercises"], queryFn: listExercises });
@@ -20,6 +45,13 @@ export function ProgressPage() {
   const plateauQuery = useQuery({
     queryKey: ["plateau", exerciseId],
     queryFn: () => getPlateau(exerciseId as number),
+    enabled: exerciseId !== "",
+    retry: false,
+  });
+
+  const currentStandardQuery = useQuery({
+    queryKey: ["currentStrengthStandard", exerciseId],
+    queryFn: () => getCurrentStrengthStandard(exerciseId as number),
     enabled: exerciseId !== "",
     retry: false,
   });
@@ -72,15 +104,15 @@ export function ProgressPage() {
 
       {exerciseId !== "" && (
         <>
-          <section className="mb-8 rounded border border-gray-200 p-4">
+          <section className="mb-6 rounded border border-gray-200 p-4">
             <h2 className="mb-3 text-sm font-semibold text-gray-900">Estimated 1RM Trend</h2>
 
             {plateauQuery.isLoading && <p className="text-sm text-gray-500">Loading...</p>}
 
             {plateauQuery.isError && (
               <p className="text-sm text-gray-500">
-                Not enough logged sets for this exercise yet - log at least 3 sessions to see a
-                trend.
+                Not enough qualifying sets for this exercise yet - log at least 3 sessions
+                (1-12 reps, RPE 8+ or unlogged) to see a trend.
               </p>
             )}
 
@@ -112,9 +144,7 @@ export function ProgressPage() {
                       unit="kg"
                       width={70}
                     />
-                    <Tooltip
-                      formatter={(value) => [`${Number(value).toFixed(1)}kg`, "Estimated 1RM"]}
-                    />
+                    <Tooltip content={<ChartTooltip />} />
                     <Line
                       type="monotone"
                       dataKey="estimated_one_rep_max"
@@ -125,12 +155,46 @@ export function ProgressPage() {
                     />
                   </LineChart>
                 </ResponsiveContainer>
+                <p className="mt-2 text-xs text-gray-400">
+                  Hover a point to see the RPE and bodyweight behind it.
+                </p>
               </>
             )}
           </section>
 
+          <section className="mb-6 rounded border border-gray-200 p-4">
+            <h2 className="mb-3 text-sm font-semibold text-gray-900">Current Strength Tier</h2>
+            {currentStandardQuery.isLoading && (
+              <p className="text-sm text-gray-500">Loading...</p>
+            )}
+            {currentStandardQuery.isError && (
+              <p className="text-sm text-gray-500">
+                No qualifying set logged yet for this exercise, or bodyweight hasn't been
+                logged.
+              </p>
+            )}
+            {currentStandardQuery.data && (
+              <div className="text-sm text-gray-700">
+                <p>
+                  Tier:{" "}
+                  <span className="font-semibold text-gray-900">
+                    {currentStandardQuery.data.tier}
+                  </span>
+                </p>
+                <p>
+                  Estimated 1RM: {currentStandardQuery.data.estimated_one_rep_max.toFixed(1)}kg
+                  · Ratio: {currentStandardQuery.data.bodyweight_ratio.toFixed(2)}×
+                </p>
+                <p className="text-xs text-gray-400">
+                  As of your {currentStandardQuery.data.as_of_date} session (
+                  {currentStandardQuery.data.bodyweight_kg}kg bodyweight)
+                </p>
+              </div>
+            )}
+          </section>
+
           <section className="rounded border border-gray-200 p-4">
-            <h2 className="mb-3 text-sm font-semibold text-gray-900">Check a Lift</h2>
+            <h2 className="mb-3 text-sm font-semibold text-gray-900">Check a Hypothetical Lift</h2>
             <form onSubmit={handleCheckLift} className="flex flex-wrap items-end gap-3">
               <label className="text-sm text-gray-600">
                 Weight (kg)

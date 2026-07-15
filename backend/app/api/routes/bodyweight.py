@@ -16,6 +16,19 @@ def log_bodyweight(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    # One entry per day - logging again for a date you've already logged
+    # overwrites it rather than creating a second, ambiguously-ordered row.
+    existing = (
+        db.query(BodyweightLog)
+        .filter(BodyweightLog.user_id == current_user.id, BodyweightLog.date == entry.date)
+        .first()
+    )
+    if existing:
+        existing.weight_kg = entry.weight_kg
+        db.commit()
+        db.refresh(existing)
+        return existing
+
     log = BodyweightLog(user_id=current_user.id, **entry.model_dump())
     db.add(log)
     db.commit()

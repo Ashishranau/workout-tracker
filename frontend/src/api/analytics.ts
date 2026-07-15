@@ -1,5 +1,10 @@
 import { apiClient } from "./client";
-import type { OneRepMaxResult, PlateauResult, StrengthStandardResult } from "./types";
+import type {
+  CurrentStrengthStandardResult,
+  OneRepMaxResult,
+  PlateauResult,
+  StrengthStandardResult,
+} from "./types";
 
 export async function estimateOneRepMax(
   weightKg: number,
@@ -25,6 +30,15 @@ export async function getStrengthStandard(
   const { data } = await apiClient.post<StrengthStandardResult>(
     "/analytics/strength-standard",
     { exercise_id: exerciseId, weight_kg: weightKg, reps }
+  );
+  return data;
+}
+
+export async function getCurrentStrengthStandard(
+  exerciseId: number
+): Promise<CurrentStrengthStandardResult> {
+  const { data } = await apiClient.get<CurrentStrengthStandardResult>(
+    `/analytics/strength-standard/${exerciseId}`
   );
   return data;
 }

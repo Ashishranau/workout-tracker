@@ -73,6 +73,8 @@ export interface OneRepMaxResult {
 export interface OneRepMaxHistoryPoint {
   date: string;
   estimated_one_rep_max: number;
+  rpe: number | null;
+  bodyweight_kg: number | null;
 }
 
 export interface PlateauResult {
@@ -88,4 +90,8 @@ export interface StrengthStandardResult {
   bodyweight_ratio: number;
   bodyweight_kg: number;
   estimated_one_rep_max: number;
+}
+
+export interface CurrentStrengthStandardResult extends StrengthStandardResult {
+  as_of_date: string;
 }

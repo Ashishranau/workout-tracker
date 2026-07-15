@@ -39,3 +39,11 @@ integration), see `INTERVIEW_NOTES.md` instead.
 - Built pages: Login/Register, Dashboard (session list + bodyweight widget), Log Workout (create session, add sets), Progress (exercise picker, 1RM trend line chart, plateau badge, "check a lift" strength-standard tool).
 - Verified the full flow in a real headless-Chromium browser (Playwright): login, dashboard, progress chart, strength check, and workout logging all confirmed working with zero console errors.
   - Bug caught by screenshot review (not just DOM-text checks): the Y-axis on the 1RM chart rendered garbled repeated labels from unrounded floating-point ticks - fixed with a `tickFormatter` rounding to whole kg.
+- Fixed a real bug: logging bodyweight always inserted a new row instead of updating, so same-day re-logs left duplicate rows with an undefined sort order (stale weight could win). Fixed via upsert-on-date logic + a `UniqueConstraint(user_id, date)` migration; cleaned up the duplicate test rows.
+- Added an RPE filter to the 1RM trend: a set counts only if RPE >= 8 or RPE wasn't logged - explicitly-logged low-effort sets (warmups, deload work) are excluded from `analyze_plateau`.
+- Extracted a shared `_best_sets_by_day()` helper (used by both plateau analysis and the new auto strength-standard lookup) to avoid duplicating the qualifying-set logic.
+- Extended `PlateauResponse.history` with per-point `rpe` and `bodyweight_kg` (bodyweight as of that date, via binary search over the user's bodyweight log) so the frontend chart tooltip shows the context behind each point.
+- Added `GET /analytics/strength-standard/{exercise_id}`: auto-classifies the current tier from the most recent qualifying set, no manual weight/reps entry needed (manual "check a hypothetical lift" endpoint kept as-is).
+- Frontend: added `SessionDetailPage` (`/sessions/:id`) so past workouts can be reviewed set-by-set, linked from each Dashboard session row.
+- Frontend: `ProgressPage` chart now has a custom tooltip (date, estimated 1RM, RPE, bodyweight) and a new "Current Strength Tier" section using the auto endpoint.
+- Re-verified everything in a real browser (Playwright): bodyweight upsert, session detail view, chart tooltip content, and auto tier display all confirmed working with zero console errors.

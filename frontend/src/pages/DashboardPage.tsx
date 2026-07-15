@@ -34,12 +34,17 @@ export function DashboardPage() {
           ?.slice()
           .sort((a, b) => b.date.localeCompare(a.date))
           .map((session) => (
-            <li key={session.id} className="rounded border border-gray-200 p-4">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-gray-900">{session.date}</span>
-                <span className="text-sm text-gray-500">{session.sets.length} sets</span>
-              </div>
-              {session.notes && <p className="mt-1 text-sm text-gray-600">{session.notes}</p>}
+            <li key={session.id}>
+              <Link
+                to={`/sessions/${session.id}`}
+                className="block rounded border border-gray-200 p-4 hover:border-gray-400"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-gray-900">{session.date}</span>
+                  <span className="text-sm text-gray-500">{session.sets.length} sets</span>
+                </div>
+                {session.notes && <p className="mt-1 text-sm text-gray-600">{session.notes}</p>}
+              </Link>
             </li>
           ))}
       </ul>

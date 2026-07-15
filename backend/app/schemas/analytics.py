@@ -17,6 +17,8 @@ class OneRepMaxResponse(BaseModel):
 class OneRepMaxHistoryPoint(BaseModel):
     date: date
     estimated_one_rep_max: float
+    rpe: float | None
+    bodyweight_kg: float | None
 
 
 class PlateauResponse(BaseModel):
@@ -38,3 +40,7 @@ class StrengthStandardResponse(BaseModel):
     bodyweight_ratio: float
     bodyweight_kg: float
     estimated_one_rep_max: float
+
+
+class CurrentStrengthStandardResponse(StrengthStandardResponse):
+    as_of_date: date

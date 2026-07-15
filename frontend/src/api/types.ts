@@ -19,6 +19,13 @@ export interface Exercise {
   name: string;
   category: ExerciseCategory;
   primary_muscle_group: string | null;
+  is_custom: boolean;
+}
+
+export interface ExerciseCreate {
+  name: string;
+  category: ExerciseCategory;
+  primary_muscle_group?: string | null;
 }
 
 export interface WorkoutSet {

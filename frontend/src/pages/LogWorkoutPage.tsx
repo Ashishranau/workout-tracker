@@ -1,15 +1,18 @@
 import { useState, type FormEvent } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { listExercises } from "../api/exercises";
+import { createExercise, listExercises } from "../api/exercises";
 import { addSet, createSession } from "../api/workouts";
-import type { WorkoutSession } from "../api/types";
+import type { ExerciseCategory, WorkoutSession } from "../api/types";
 
 const inputClass =
   "mt-1 block rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-indigo-500 focus:outline-none";
 
+const NEW_EXERCISE_VALUE = "__new__";
+
 export function LogWorkoutPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: exercises } = useQuery({ queryKey: ["exercises"], queryFn: listExercises });
 
   const [session, setSession] = useState<WorkoutSession | null>(null);
@@ -21,6 +24,32 @@ export function LogWorkoutPage() {
   const [reps, setReps] = useState("");
   const [rpe, setRpe] = useState("");
   const [setError, setSetError] = useState<string | null>(null);
+
+  const [isAddingExercise, setIsAddingExercise] = useState(false);
+  const [newExerciseName, setNewExerciseName] = useState("");
+  const [newExerciseCategory, setNewExerciseCategory] = useState<ExerciseCategory>("barbell");
+  const [newExerciseMuscleGroup, setNewExerciseMuscleGroup] = useState("");
+  const [newExerciseError, setNewExerciseError] = useState<string | null>(null);
+
+  const createExerciseMutation = useMutation({
+    mutationFn: () =>
+      createExercise({
+        name: newExerciseName,
+        category: newExerciseCategory,
+        primary_muscle_group: newExerciseMuscleGroup || undefined,
+      }),
+    onSuccess: (created) => {
+      queryClient.invalidateQueries({ queryKey: ["exercises"] });
+      setExerciseId(created.id);
+      setIsAddingExercise(false);
+      setNewExerciseName("");
+      setNewExerciseMuscleGroup("");
+      setNewExerciseError(null);
+    },
+    onError: () => {
+      setNewExerciseError("Could not create exercise - that name may already exist");
+    },
+  });
 
   async function handleCreateSession(e: FormEvent) {
     e.preventDefault();
@@ -90,63 +119,133 @@ export function LogWorkoutPage() {
       <h1 className="mb-1 text-2xl font-semibold text-white">{session.date}</h1>
       {session.notes && <p className="mb-6 text-slate-400">{session.notes}</p>}
 
-      <form onSubmit={handleAddSet} className="mb-4 flex flex-wrap items-end gap-3">
-        <label className="text-sm text-slate-400">
-          Exercise
-          <select
-            value={exerciseId}
-            onChange={(e) => setExerciseId(Number(e.target.value))}
-            required
-            className={inputClass}
-          >
-            <option value="" disabled>
-              Select...
-            </option>
-            {exercises?.map((ex) => (
-              <option key={ex.id} value={ex.id}>
-                {ex.name}
+      {isAddingExercise ? (
+        <div className="mb-4 rounded border border-slate-800 bg-slate-900 p-4">
+          <h2 className="mb-3 text-sm font-semibold text-white">Add new exercise</h2>
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="text-sm text-slate-400">
+              Name
+              <input
+                type="text"
+                value={newExerciseName}
+                onChange={(e) => setNewExerciseName(e.target.value)}
+                placeholder="e.g. Trap Bar Deadlift"
+                className={`${inputClass} w-56`}
+              />
+            </label>
+            <label className="text-sm text-slate-400">
+              Category
+              <select
+                value={newExerciseCategory}
+                onChange={(e) => setNewExerciseCategory(e.target.value as ExerciseCategory)}
+                className={inputClass}
+              >
+                <option value="barbell">Barbell</option>
+                <option value="dumbbell">Dumbbell</option>
+                <option value="machine">Machine</option>
+                <option value="bodyweight">Bodyweight</option>
+              </select>
+            </label>
+            <label className="text-sm text-slate-400">
+              Muscle group (optional)
+              <input
+                type="text"
+                value={newExerciseMuscleGroup}
+                onChange={(e) => setNewExerciseMuscleGroup(e.target.value)}
+                placeholder="e.g. legs"
+                className={`${inputClass} w-32`}
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => createExerciseMutation.mutate()}
+              disabled={!newExerciseName || createExerciseMutation.isPending}
+              className="rounded bg-indigo-500 px-4 py-2 text-sm text-white hover:bg-indigo-400 disabled:opacity-50"
+            >
+              Create
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsAddingExercise(false);
+                setNewExerciseError(null);
+              }}
+              className="text-sm text-slate-400 underline hover:text-slate-200"
+            >
+              Cancel
+            </button>
+          </div>
+          {newExerciseError && (
+            <p className="mt-2 text-sm text-red-400">{newExerciseError}</p>
+          )}
+        </div>
+      ) : (
+        <form onSubmit={handleAddSet} className="mb-4 flex flex-wrap items-end gap-3">
+          <label className="text-sm text-slate-400">
+            Exercise
+            <select
+              value={exerciseId}
+              onChange={(e) => {
+                if (e.target.value === NEW_EXERCISE_VALUE) {
+                  setIsAddingExercise(true);
+                  return;
+                }
+                setExerciseId(Number(e.target.value));
+              }}
+              required
+              className={inputClass}
+            >
+              <option value="" disabled>
+                Select...
               </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-sm text-slate-400">
-          Weight (kg)
-          <input
-            type="number"
-            step="0.5"
-            value={weightKg}
-            onChange={(e) => setWeightKg(e.target.value)}
-            required
-            className={`${inputClass} w-24`}
-          />
-        </label>
-        <label className="text-sm text-slate-400">
-          Reps
-          <input
-            type="number"
-            value={reps}
-            onChange={(e) => setReps(e.target.value)}
-            required
-            className={`${inputClass} w-20`}
-          />
-        </label>
-        <label className="text-sm text-slate-400">
-          RPE
-          <input
-            type="number"
-            step="0.5"
-            value={rpe}
-            onChange={(e) => setRpe(e.target.value)}
-            className={`${inputClass} w-20`}
-          />
-        </label>
-        <button
-          type="submit"
-          className="rounded bg-indigo-500 px-4 py-2 text-white hover:bg-indigo-400"
-        >
-          Add set
-        </button>
-      </form>
+              {exercises?.map((ex) => (
+                <option key={ex.id} value={ex.id}>
+                  {ex.name}
+                  {ex.is_custom ? " (custom)" : ""}
+                </option>
+              ))}
+              <option value={NEW_EXERCISE_VALUE}>+ Add new exercise...</option>
+            </select>
+          </label>
+          <label className="text-sm text-slate-400">
+            Weight (kg)
+            <input
+              type="number"
+              step="0.5"
+              value={weightKg}
+              onChange={(e) => setWeightKg(e.target.value)}
+              required
+              className={`${inputClass} w-24`}
+            />
+          </label>
+          <label className="text-sm text-slate-400">
+            Reps
+            <input
+              type="number"
+              value={reps}
+              onChange={(e) => setReps(e.target.value)}
+              required
+              className={`${inputClass} w-20`}
+            />
+          </label>
+          <label className="text-sm text-slate-400">
+            RPE
+            <input
+              type="number"
+              step="0.5"
+              value={rpe}
+              onChange={(e) => setRpe(e.target.value)}
+              className={`${inputClass} w-20`}
+            />
+          </label>
+          <button
+            type="submit"
+            className="rounded bg-indigo-500 px-4 py-2 text-white hover:bg-indigo-400"
+          >
+            Add set
+          </button>
+        </form>
+      )}
       {setError && <p className="mb-4 text-sm text-red-400">{setError}</p>}
 
       <ul className="flex flex-col gap-2">

@@ -51,3 +51,6 @@ integration), see `INTERVIEW_NOTES.md` instead.
 - Cleaned up leftover test-data sessions created during my own verification runs.
 - Redesigned the frontend with a dark theme (Tailwind CSS only - no new libraries): dark slate backgrounds, indigo accent for primary actions/links, and updated recharts colors (grid, axis ticks, line, tooltip) for readability against the dark background, since those are SVG props recharts takes directly and aren't themed by Tailwind's dark-mode classes.
 - Re-verified visually in a real browser across all five pages (login, dashboard, log workout, progress, session detail) - consistent dark styling, readable chart, zero console errors.
+- Added user-created custom exercises: `Exercise.created_by_user_id` (nullable FK, null = official catalog), `GET /exercises` now scoped to official + the current user's own additions, `POST /exercises` to create one (duplicate names cleanly rejected via the existing unique constraint).
+- Frontend: "+ Add new exercise..." option in the Log Workout exercise dropdown opens an inline form (name/category/muscle group); on success it auto-selects the new exercise and refreshes the dropdown everywhere via query invalidation.
+- Verified end-to-end (curl + browser + DB check): scoped listing, duplicate rejection, and the create-then-auto-select UI flow all work correctly.

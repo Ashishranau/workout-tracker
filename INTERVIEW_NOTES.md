@@ -238,3 +238,36 @@ uncertain-quality ones for something meant to answer "am I actually
 stagnating." Missing RPE defaults to *included*, not excluded, specifically
 because most already-logged data predates RPE tracking - a stricter default
 would have silently discarded a user's own history.
+
+## User-created exercises: per-user scoped, not global free text
+
+**Chosen:** Users can add their own exercises beyond the curated catalog.
+Each custom exercise has a nullable `created_by_user_id` - null means it's
+part of the official catalog, otherwise it's visible only to the user who
+created it. `GET /exercises` returns official + the caller's own.
+
+**Alternatives considered:** (1) Just keep expanding the seeded catalog
+indefinitely instead of letting users add exercises. (2) Free-text exercise
+names entered per-set (no catalog entity at all). (3) User-created
+exercises visible globally to every user, same table, no scoping.
+
+**Why rejected:** Endlessly expanding a hand-seeded catalog doesn't scale -
+there will always be a lift someone wants that isn't in it. This is also
+the same free-text-vs-catalog tension from the original schema decision
+(see "Schema design" above) - that decision rejected free text specifically
+because inconsistent naming (e.g. "Bench", "Bench Press", "flat bench")
+breaks the strength-standard feature's exercise-identity assumption. Custom
+exercises don't reopen that problem because they never get a strength
+standard anyway (only the curated "big 5" do) - so there's nothing for
+inconsistent naming to corrupt. Making custom exercises globally visible was
+rejected because, unlike the original percentile-ranking concern, this one
+actually would degrade the shared catalog over time: every user's one-off or
+oddly-named addition would clutter every other user's dropdown, even though
+the exercises table already enforces globally unique names (so it's a
+noise problem, not a duplicate-data problem).
+
+**Tradeoff accepted:** A genuinely common exercise (say, "Trap Bar Deadlift")
+gets added independently by every user who wants it, rather than being
+added once and shared - some duplicated effort across users in exchange for
+no cross-user clutter. For a project with a small number of real users, that
+tradeoff clearly favors cleanliness over deduplication.

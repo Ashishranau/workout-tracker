@@ -32,3 +32,10 @@ integration), see `INTERVIEW_NOTES.md` instead.
 - Added `strength_standard.{hpp,cpp}`: classifies a lift into Beginner..Elite tiers via bodyweight-ratio breakpoints (binary search with `std::upper_bound`), per exercise + sex; unsupported exercises return `supported=false` rather than a guess.
 - Added `classify_strength_standard()` service + `POST /analytics/strength-standard` route; gates on having a logged bodyweight first.
 - Verified end-to-end: missing-bodyweight gate, successful classification, and unsupported-exercise rejection all behave correctly.
+- Added CORS middleware to FastAPI, allowing the Vite dev server origin (`http://localhost:5173`).
+- Extended `PlateauResponse` with a `history` field (per-session date + estimated 1RM) so the frontend can chart the actual trend, not just the regression summary.
+- Scaffolded `frontend/` with Vite + React + TypeScript, Tailwind CSS v4, TanStack Query, React Router, recharts, and Axios.
+- Built `src/api/` (typed client functions mirroring backend schemas) and `AuthContext` (JWT stored in `localStorage`, attached to requests via an Axios interceptor).
+- Built pages: Login/Register, Dashboard (session list + bodyweight widget), Log Workout (create session, add sets), Progress (exercise picker, 1RM trend line chart, plateau badge, "check a lift" strength-standard tool).
+- Verified the full flow in a real headless-Chromium browser (Playwright): login, dashboard, progress chart, strength check, and workout logging all confirmed working with zero console errors.
+  - Bug caught by screenshot review (not just DOM-text checks): the Y-axis on the 1RM chart rendered garbled repeated labels from unrounded floating-point ticks - fixed with a `tickFormatter` rounding to whole kg.

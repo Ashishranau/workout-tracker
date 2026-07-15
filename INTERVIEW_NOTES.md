@@ -164,3 +164,43 @@ became its own time-series table (`BodyweightLog`) instead of a single mutable
 field on `User` - both are inputs the ratio calculation genuinely needs, and
 bodyweight specifically needs to reflect what it was *at the time* of a given
 lift, not just today's number.
+
+## Frontend stack: TypeScript, Tailwind CSS, TanStack Query
+
+**Chosen:** Vite + React + TypeScript, styled with Tailwind CSS, server state
+(API data) managed by TanStack Query, client state (auth) via a small React
+Context, `react-router-dom` for routing, `recharts` for the progression chart.
+
+**Alternatives considered:** Plain JavaScript instead of TypeScript; a
+component library (Mantine) instead of Tailwind; plain `fetch` +
+`useEffect`/`useState` instead of TanStack Query; Create React App instead of
+Vite.
+
+**Why rejected:** Plain JavaScript would remove one axis of new-concept load
+while first learning React, but loses compile-time checking against the
+FastAPI/Pydantic response shapes - a mismatch (e.g. a renamed field) would
+only surface at runtime instead of at build time. A component library would
+get a polished UI faster with less CSS knowledge required, but Tailwind's
+utility classes stay colocated with the markup they style, which matters more
+once components get reused across pages (Dashboard, Log Workout, Progress all
+share button/input styles). Plain `fetch`/`useEffect` is fewer concepts to
+learn up front, but means hand-writing loading/error state and manual
+re-fetching on every page - TanStack Query centralizes that (`isLoading`,
+`isError`, caching, and `invalidateQueries` to refresh data after a mutation,
+e.g. re-fetching the bodyweight list right after logging a new entry). Create
+React App is now unmaintained by its team; Vite is the de facto successor.
+
+**Tradeoff accepted:** Three new libraries/concepts (TypeScript, Tailwind,
+TanStack Query) to learn simultaneously while also learning React itself -
+more upfront friction than the minimal alternative, in exchange for patterns
+that scale better as more pages get added and that are closer to what
+production React codebases actually look like.
+
+**Gotcha hit:** the 1RM trend chart's Y-axis initially rendered garbled,
+repeated tick labels (e.g. "3333334kg") - recharts was generating ticks from
+raw unrounded floating-point 1RM estimates and clipping the label width. This
+wasn't caught by DOM-text assertions in an automated check (the text
+"Improving" and the data were both present and correct) - only visually
+inspecting a screenshot surfaced it. Fixed with a `tickFormatter` rounding
+values to whole kg. Take-away: verifying a chart needs looking at the
+rendered chart, not just checking that the underlying data arrived.

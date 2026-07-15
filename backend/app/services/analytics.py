@@ -69,6 +69,9 @@ def analyze_plateau(
         "slope_per_week": result.slope_per_week,
         "percent_change_per_week": result.percent_change_per_week,
         "sessions_used": result.sessions_used,
+        "history": [
+            {"date": d, "estimated_one_rep_max": best_per_day[d]} for d in sorted_dates
+        ],
     }
 
 

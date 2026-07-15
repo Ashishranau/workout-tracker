@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import BaseModel
 
 
@@ -12,11 +14,17 @@ class OneRepMaxResponse(BaseModel):
     average: float
 
 
+class OneRepMaxHistoryPoint(BaseModel):
+    date: date
+    estimated_one_rep_max: float
+
+
 class PlateauResponse(BaseModel):
     is_plateaued: bool
     slope_per_week: float
     percent_change_per_week: float
     sessions_used: int
+    history: list[OneRepMaxHistoryPoint]
 
 
 class StrengthStandardRequest(BaseModel):

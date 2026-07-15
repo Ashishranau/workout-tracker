@@ -10,6 +10,7 @@ pybind11_add_module(analytics_engine
     src/bindings.cpp
     src/one_rep_max.cpp
     src/plateau.cpp
+    src/strength_standard.cpp
 )
 
 target_include_directories(analytics_engine PRIVATE include)

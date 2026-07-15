@@ -3,6 +3,9 @@ from pathlib import Path
 
 from sqlalchemy.orm import Session
 
+from app.models.bodyweight import BodyweightLog
+from app.models.exercise import Exercise
+from app.models.user import User
 from app.models.workout import WorkoutSession, WorkoutSet
 
 # The C++ engine is built separately (see cpp_engine/CMakeLists.txt) and produces
@@ -66,4 +69,40 @@ def analyze_plateau(
         "slope_per_week": result.slope_per_week,
         "percent_change_per_week": result.percent_change_per_week,
         "sessions_used": result.sessions_used,
+    }
+
+
+def classify_strength_standard(
+    db: Session,
+    user: User,
+    exercise_id: int,
+    weight_kg: float,
+    reps: int,
+) -> dict:
+    exercise = db.query(Exercise).filter(Exercise.id == exercise_id).first()
+    if exercise is None:
+        raise ValueError("Exercise not found")
+
+    latest_bodyweight = (
+        db.query(BodyweightLog)
+        .filter(BodyweightLog.user_id == user.id)
+        .order_by(BodyweightLog.date.desc())
+        .first()
+    )
+    if latest_bodyweight is None:
+        raise ValueError("Log your bodyweight before requesting a strength standard")
+
+    one_rep_max = _engine.estimate_one_rep_max(weight_kg, reps).average
+    bodyweight_kg = float(latest_bodyweight.weight_kg)
+    result = _engine.classify_strength_standard(
+        exercise.name, user.sex.value, one_rep_max, bodyweight_kg
+    )
+    if not result.supported:
+        raise ValueError(f"No strength standard defined for '{exercise.name}'")
+
+    return {
+        "tier": result.tier,
+        "bodyweight_ratio": result.bodyweight_ratio,
+        "bodyweight_kg": bodyweight_kg,
+        "estimated_one_rep_max": one_rep_max,
     }

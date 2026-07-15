@@ -3,6 +3,7 @@
 
 #include "one_rep_max.hpp"
 #include "plateau.hpp"
+#include "strength_standard.hpp"
 
 namespace py = pybind11;
 
@@ -37,5 +38,20 @@ PYBIND11_MODULE(analytics_engine, m) {
         py::arg("one_rep_maxes"),
         py::arg("threshold_percent_per_week") = 0.5,
         "Fit a linear trend to per-session 1RM estimates and flag a plateau"
+    );
+
+    py::class_<analytics::StrengthStandardResult>(m, "StrengthStandardResult")
+        .def_readonly("supported", &analytics::StrengthStandardResult::supported)
+        .def_readonly("tier", &analytics::StrengthStandardResult::tier)
+        .def_readonly("bodyweight_ratio", &analytics::StrengthStandardResult::bodyweight_ratio);
+
+    m.def(
+        "classify_strength_standard",
+        &analytics::classify_strength_standard,
+        py::arg("exercise_name"),
+        py::arg("sex"),
+        py::arg("estimated_one_rep_max"),
+        py::arg("bodyweight_kg"),
+        "Classify a lift into Beginner..Elite tiers by bodyweight ratio"
     );
 }

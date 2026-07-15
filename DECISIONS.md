@@ -26,3 +26,9 @@ integration), see `INTERVIEW_NOTES.md` instead.
 - Added `analyze_plateau()` in `app/services/analytics.py`: queries the user's sets for an exercise (reps 1-12 only), takes the best estimated 1RM per session day, feeds the trend into the C++ regression.
 - Added `GET /analytics/plateau/{exercise_id}` route (auth-protected).
 - Verified end-to-end with a flat trend (correctly flagged as plateaued), an improving trend (correctly not flagged), and a no-data case (clean 400).
+- Added `sex` (required) to `User`, and a `BodyweightLog` table (date + weight_kg) for tracking bodyweight over time.
+- Reset local test data and applied migration `16e953995612` (had to manually fix autogenerate - Alembic doesn't `CREATE TYPE` for Postgres enums on its own).
+- Added `POST/GET /users/me/bodyweight` routes.
+- Added `strength_standard.{hpp,cpp}`: classifies a lift into Beginner..Elite tiers via bodyweight-ratio breakpoints (binary search with `std::upper_bound`), per exercise + sex; unsupported exercises return `supported=false` rather than a guess.
+- Added `classify_strength_standard()` service + `POST /analytics/strength-standard` route; gates on having a logged bodyweight first.
+- Verified end-to-end: missing-bodyweight gate, successful classification, and unsupported-exercise rejection all behave correctly.

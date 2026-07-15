@@ -17,3 +17,16 @@ class PlateauResponse(BaseModel):
     slope_per_week: float
     percent_change_per_week: float
     sessions_used: int
+
+
+class StrengthStandardRequest(BaseModel):
+    exercise_id: int
+    weight_kg: float
+    reps: int
+
+
+class StrengthStandardResponse(BaseModel):
+    tier: str
+    bodyweight_ratio: float
+    bodyweight_kg: float
+    estimated_one_rep_max: float

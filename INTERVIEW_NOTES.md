@@ -124,3 +124,43 @@ should run as fast and as directly-integrated as possible.
 (what most tutorials show) failed because the actual installed MSBuild/toolset
 version didn't match. Fixed by checking `cmake --help` for the generator CMake
 actually detected on this machine, rather than assuming a fixed generator string.
+
+## Third analytics feature: strength standard tiers, not percentile ranking
+
+**Chosen:** Classify a lift into Beginner/Novice/Intermediate/Advanced/Elite
+tiers using bodyweight-ratio breakpoints (per exercise and sex), rather than
+computing a true percentile against a population dataset.
+
+**Alternatives considered:** The original plan (see project stack) was
+"strength percentile ranking" against a real population - the obvious source
+being OpenPowerlifting, a large (CC0-licensed) open dataset of competition
+results.
+
+**Why rejected:** OpenPowerlifting is competition-entry data - a self-selected
+population of people who specifically trained for and entered powerlifting
+meets. Comparing an ordinary gym-goer's lift against that population is an
+apples-to-oranges comparison: a genuinely strong casual lifter would land in
+a low percentile purely because the comparison group is elite, not because
+their lifting is actually below average. For an app whose feedback feature is
+meant to be motivating and informative, that's actively the wrong signal to
+show someone. There's also a second, practical problem specific to this
+project: true percentile ranking needs a real population of *this app's*
+users to compare against, and as a resume project with a handful of users at
+most, that number would be statistically meaningless (or a trivial "100th
+percentile of 1") regardless of data quality.
+
+**Tradeoff accepted:** Bodyweight-ratio standard tiers don't tell a user
+exactly "how many people" they're stronger than - they place a lift on a
+general, published-style bodyweight-relative scale instead. The specific
+breakpoint numbers used are approximate, commonly-cited general strength
+benchmarks (the same style used by tools like Strength Level/ExRx), not a
+reproduction of one single verified academic or federation source - this is
+disclosed directly in the code and is an intentional accuracy/scope tradeoff
+given the project's purpose. It also only covers exercises with a
+well-established standard (the five main barbell lifts); machine and
+dumbbell exercises cleanly report "not supported" rather than a fabricated
+number. This is also why `sex` became a required signup field and bodyweight
+became its own time-series table (`BodyweightLog`) instead of a single mutable
+field on `User` - both are inputs the ratio calculation genuinely needs, and
+bodyweight specifically needs to reflect what it was *at the time* of a given
+lift, not just today's number.
